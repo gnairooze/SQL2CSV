@@ -1,0 +1,45 @@
+﻿<configuration>
+  <csvSettings>
+    <separator>|</separator>
+    <separatorReplacement> </separatorReplacement>
+    <quote>false</quote>
+    <quoteReplacement> </quoteReplacement>
+    <newLineReplacement> </newLineReplacement>
+  </csvSettings>
+  <dataSettings>
+    <connectionString>Data Source=.;Initial Catalog=SimpleHooks;Integrated Security=SSPI;</connectionString>
+    <sql>
+      <![CDATA[
+      select top (10) 
+	      *
+      from EventInstance
+      order by 
+	      Id
+      ]]>
+    </sql>
+    <timeout>30</timeout>
+    <maxRecords>5</maxRecords>
+  </dataSettings>
+  <emailSettings>
+    <mailTo>sample@mail.com</mailTo>
+    <mailSubjectPrefix>data</mailSubjectPrefix>
+    <mailBody>
+      <![CDATA[
+      dears,
+        please find the attached file.
+      regards,
+      operation team
+      ]]>
+    </mailBody>
+    <sendMail>false</sendMail>
+  </emailSettings>
+  <fileSettings>
+    <dateFormat>dd_MMM_yyyy_UTC_HH_mm_ss_fff</dateFormat>
+    <batchFormat>D3</batchFormat>
+    <fileName>users_{$Batch$}</fileName>
+    <relativeFilePath>.\results</relativeFilePath>
+    <bufferWrite>500</bufferWrite>
+    <compress>true</compress>
+    <deleteFile>true</deleteFile>
+  </fileSettings>
+</configuration>
