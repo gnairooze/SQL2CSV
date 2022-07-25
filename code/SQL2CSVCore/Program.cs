@@ -15,12 +15,31 @@ namespace SQL2CSVCore
                 }
 
                 ConfigurationHelper helper = new ConfigurationHelper();
-                SQL2CSV.Interfaces.IEmailManager emailManager = new SQL2CSV.Business.EmailManager(helper.EmailSetting);
-                SQL2CSV.Interfaces.IFileManager fileManager = new SQL2CSV.Business.FileManager(helper.Settings);
 
-                SQL2CSV.Business.Manager manager = new SQL2CSV.Business.Manager(helper.Settings, fileManager, emailManager);
+                int settingsListCounter = 0;
 
-                manager.ReadData();
+                foreach (var setting in helper.Settings)
+                {
+                    settingsListCounter++;
+                    Console.WriteLine($"{DateTime.UtcNow.ToString("HH:mm:ss.fff")} - start setting {settingsListCounter}");
+                    try
+                    {
+                        SQL2CSV.Interfaces.IEmailManager emailManager = new SQL2CSV.Business.EmailManager(setting.EmailSetting);
+                        SQL2CSV.Interfaces.IFileManager fileManager = new SQL2CSV.Business.FileManager(setting);
+
+
+                        SQL2CSV.Business.Manager manager = new SQL2CSV.Business.Manager(setting, fileManager, emailManager);
+
+                        manager.ReadData();
+
+                        Console.WriteLine($"{DateTime.UtcNow.ToString("HH:mm:ss.fff")} - end setting {settingsListCounter}");
+                        Console.WriteLine("--------------------------------------------");
+                    }
+                    catch (Exception ex)
+                    {
+                        File.AppendAllText("Log.txt", ex.ToString());
+                    }
+                }
             }
             catch (Exception ex)
             {

@@ -10,7 +10,7 @@ namespace SQL2CSVCore
     internal class ConfigurationHelper
     {
         private readonly IConfigurationRoot _Config;
-        private readonly SQL2CSV.Interfaces.Models.Settings _Settings;
+        private readonly List<SQL2CSV.Interfaces.Models.Settings> _Settings;
         public ConfigurationHelper()
         {
             _Config = new ConfigurationBuilder()
@@ -21,81 +21,64 @@ namespace SQL2CSVCore
             _Settings = ReadSettingsFromConfig();
         }
 
-        private Settings ReadSettingsFromConfig()
+        private List<Settings> ReadSettingsFromConfig()
         {
-            var settings = new SQL2CSV.Interfaces.Models.Settings();
+            List<Settings> settingsList = new();
 
-            settings.CSVSetting = new SQL2CSV.Interfaces.Models.CSVSettings()
+            var settingsConfigs = _Config.GetSection("settings").GetChildren();
+
+            foreach (var settingsConfig in settingsConfigs)
             {
-                NewLineReplacement = _Config.GetSection("csvSettings")["newLineReplacement"],
-                Quote = bool.Parse(_Config.GetSection("csvSettings")["quote"]),
-                QuoteReplacement = _Config.GetSection("csvSettings")["quoteReplacement"],
-                Separator = _Config.GetSection("csvSettings")["separator"],
-                SeparatorReplacement = _Config.GetSection("csvSettings")["separatorReplacement"]
-            };
+                var settings = new SQL2CSV.Interfaces.Models.Settings();
 
-            settings.DataSetting = new SQL2CSV.Interfaces.Models.DataSettings()
-            {
-                ConnectionString = _Config.GetSection("dataSettings")["connectionString"],
-                MaxRecords = int.Parse(_Config.GetSection("dataSettings")["maxRecords"]),
-                SQL = _Config.GetSection("dataSettings")["sql"],
-                Timeout = int.Parse(_Config.GetSection("dataSettings")["timeout"]),
-            };
+                settings.CSVSetting = new SQL2CSV.Interfaces.Models.CSVSettings()
+                {
+                    NewLineReplacement = settingsConfig.GetSection("csvSettings")["newLineReplacement"],
+                    Quote = bool.Parse(settingsConfig.GetSection("csvSettings")["quote"]),
+                    QuoteReplacement = settingsConfig.GetSection("csvSettings")["quoteReplacement"],
+                    Separator = settingsConfig.GetSection("csvSettings")["separator"],
+                    SeparatorReplacement = settingsConfig.GetSection("csvSettings")["separatorReplacement"]
+                };
 
-            settings.EmailSetting = new SQL2CSV.Interfaces.Models.EmailSettings()
-            {
-                MailBody = _Config.GetSection("emailSettings")["mailBody"],
-                MailSubjectPrefix = _Config.GetSection("emailSettings")["mailSubjectPrefix"],
-                MailTo = _Config.GetSection("emailSettings")["mailTo"],
-                SendMail = bool.Parse(_Config.GetSection("emailSettings")["sendMail"])
-            };
+                settings.DataSetting = new SQL2CSV.Interfaces.Models.DataSettings()
+                {
+                    ConnectionString = settingsConfig.GetSection("dataSettings")["connectionString"],
+                    MaxRecords = int.Parse(settingsConfig.GetSection("dataSettings")["maxRecords"]),
+                    SQL = settingsConfig.GetSection("dataSettings")["sql"],
+                    Timeout = int.Parse(settingsConfig.GetSection("dataSettings")["timeout"]),
+                };
 
-            settings.FileSetting = new SQL2CSV.Interfaces.Models.FileSettings()
-            {
-                BatchFormat = _Config.GetSection("fileSettings")["batchFormat"],
-                BufferWrite = int.Parse(_Config.GetSection("fileSettings")["bufferWrite"]),
-                Compress = bool.Parse(_Config.GetSection("fileSettings")["compress"]),
-                DateFormat = _Config.GetSection("fileSettings")["dateFormat"],
-                DeleteFile = bool.Parse(_Config.GetSection("fileSettings")["deleteFile"]),
-                FileName = _Config.GetSection("fileSettings")["fileName"],
-                RelativeFilePath = _Config.GetSection("fileSettings")["relativeFilePath"],
-            };
+                settings.EmailSetting = new SQL2CSV.Interfaces.Models.EmailSettings()
+                {
+                    MailBody = settingsConfig.GetSection("emailSettings")["mailBody"],
+                    MailSubjectPrefix = settingsConfig.GetSection("emailSettings")["mailSubjectPrefix"],
+                    MailTo = settingsConfig.GetSection("emailSettings")["mailTo"],
+                    SendMail = bool.Parse(settingsConfig.GetSection("emailSettings")["sendMail"])
+                };
 
-            return settings;
+                settings.FileSetting = new SQL2CSV.Interfaces.Models.FileSettings()
+                {
+                    BatchFormat = settingsConfig.GetSection("fileSettings")["batchFormat"],
+                    BufferWrite = int.Parse(settingsConfig.GetSection("fileSettings")["bufferWrite"]),
+                    Compress = bool.Parse(settingsConfig.GetSection("fileSettings")["compress"]),
+                    DateFormat = settingsConfig.GetSection("fileSettings")["dateFormat"],
+                    DeleteFile = bool.Parse(settingsConfig.GetSection("fileSettings")["deleteFile"]),
+                    FileName = settingsConfig.GetSection("fileSettings")["fileName"],
+                    RelativeFilePath = settingsConfig.GetSection("fileSettings")["relativeFilePath"],
+                };
+
+                settingsList.Add(settings);
+            }
+
+            return settingsList;
         }
 
-        public SQL2CSV.Interfaces.Models.Settings Settings
+        public List<Settings> Settings
         {
             get 
             { 
                 return this._Settings; 
             }
         }
-
-        public SQL2CSV.Interfaces.Models.CSVSettings CSVSetting
-        {
-            get
-            {
-                return _Settings.CSVSetting;
-            }
-        }
-
-        public SQL2CSV.Interfaces.Models.DataSettings DataSetting
-        {
-            get
-            {
-                return _Settings.DataSetting;
-            }
-        }
-
-        public SQL2CSV.Interfaces.Models.EmailSettings EmailSetting
-        {
-            get
-            {
-                return _Settings.EmailSetting;
-            }
-        }
-
-
     }
 }
