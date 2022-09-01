@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="appsettings-pascal.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="appsettings.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

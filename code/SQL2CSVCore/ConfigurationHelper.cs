@@ -3,6 +3,7 @@ using SQL2CSV.Interfaces.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SQL2CSVCore
@@ -11,11 +12,20 @@ namespace SQL2CSVCore
     {
         private readonly IConfigurationRoot _Config;
         private readonly List<SQL2CSV.Interfaces.Models.Settings> _Settings;
+
+        public List<Settings> Settings
+        {
+            get
+            {
+                return this._Settings;
+            }
+        }
+
         public ConfigurationHelper()
         {
             _Config = new ConfigurationBuilder()
                            .SetBasePath(Directory.GetCurrentDirectory())
-                           .AddXmlFile("appsettings.xml")
+                           .AddXmlFile(path: "appsettings.xml", optional: false, reloadOnChange: true)
                            .Build();
 
             _Settings = ReadSettingsFromConfig();
@@ -25,7 +35,7 @@ namespace SQL2CSVCore
         {
             List<Settings> settingsList = new();
 
-            var settingsConfigs = _Config.GetSection("settings").GetChildren();
+            var settingsConfigs = _Config.GetSection("settings").GetChildren().ToList();
 
             foreach (var settingsConfig in settingsConfigs)
             {
@@ -71,14 +81,6 @@ namespace SQL2CSVCore
             }
 
             return settingsList;
-        }
-
-        public List<Settings> Settings
-        {
-            get 
-            { 
-                return this._Settings; 
-            }
         }
     }
 }
