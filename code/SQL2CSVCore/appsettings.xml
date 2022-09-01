@@ -2,10 +2,10 @@
   <settings>
   <csvSettings>
     <separator>|</separator>
-    <separatorReplacement> </separatorReplacement>
+    <separatorReplacement><![CDATA[ ]]></separatorReplacement>
     <quote>false</quote>
-    <quoteReplacement> </quoteReplacement>
-    <newLineReplacement> </newLineReplacement>
+    <quoteReplacement><![CDATA[ ]]></quoteReplacement>
+    <newLineReplacement><![CDATA[ ]]></newLineReplacement>
   </csvSettings>
   <dataSettings>
     <connectionString>Data Source=.;Initial Catalog=SimpleHooks;Integrated Security=SSPI;</connectionString>
