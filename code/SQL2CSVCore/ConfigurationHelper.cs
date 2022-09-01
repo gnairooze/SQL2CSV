@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace SQL2CSVCore
 {
     internal class ConfigurationHelper
     {
-        private readonly IConfigurationRoot _Config;
+        private readonly XmlDocument _Config;
         private readonly List<SQL2CSV.Interfaces.Models.Settings> _Settings;
 
         public List<Settings> Settings
@@ -23,10 +24,8 @@ namespace SQL2CSVCore
 
         public ConfigurationHelper()
         {
-            _Config = new ConfigurationBuilder()
-                           .SetBasePath(Directory.GetCurrentDirectory())
-                           .AddXmlFile(path: "appsettings.xml", optional: false, reloadOnChange: true)
-                           .Build();
+            _Config = new XmlDocument();
+            _Config.Load("appsettings.xml");
 
             _Settings = ReadSettingsFromConfig();
         }
@@ -35,46 +34,46 @@ namespace SQL2CSVCore
         {
             List<Settings> settingsList = new();
 
-            var settingsConfigs = _Config.GetSection("settings").GetChildren().ToList();
+            var settingsConfigs = _Config.SelectNodes("//settings");
 
-            foreach (var settingsConfig in settingsConfigs)
+            foreach (XmlNode settingsConfig in settingsConfigs)
             {
                 var settings = new SQL2CSV.Interfaces.Models.Settings();
 
                 settings.CSVSetting = new SQL2CSV.Interfaces.Models.CSVSettings()
                 {
-                    NewLineReplacement = settingsConfig.GetSection("csvSettings")["newLineReplacement"],
-                    Quote = bool.Parse(settingsConfig.GetSection("csvSettings")["quote"]),
-                    QuoteReplacement = settingsConfig.GetSection("csvSettings")["quoteReplacement"],
-                    Separator = settingsConfig.GetSection("csvSettings")["separator"],
-                    SeparatorReplacement = settingsConfig.GetSection("csvSettings")["separatorReplacement"]
+                    NewLineReplacement = settingsConfig.SelectSingleNode("csvSettings")["newLineReplacement"].InnerText,
+                    Quote = bool.Parse(settingsConfig.SelectSingleNode("csvSettings")["quote"].InnerText),
+                    QuoteReplacement = settingsConfig.SelectSingleNode("csvSettings")["quoteReplacement"].InnerText,
+                    Separator = settingsConfig.SelectSingleNode("csvSettings")["separator"].InnerText,
+                    SeparatorReplacement = settingsConfig.SelectSingleNode("csvSettings")["separatorReplacement"].InnerText
                 };
 
                 settings.DataSetting = new SQL2CSV.Interfaces.Models.DataSettings()
                 {
-                    ConnectionString = settingsConfig.GetSection("dataSettings")["connectionString"],
-                    MaxRecords = int.Parse(settingsConfig.GetSection("dataSettings")["maxRecords"]),
-                    SQL = settingsConfig.GetSection("dataSettings")["sql"],
-                    Timeout = int.Parse(settingsConfig.GetSection("dataSettings")["timeout"]),
+                    ConnectionString = settingsConfig.SelectSingleNode("dataSettings")["connectionString"].InnerText,
+                    MaxRecords = int.Parse(settingsConfig.SelectSingleNode("dataSettings")["maxRecords"].InnerText),
+                    SQL = settingsConfig.SelectSingleNode("dataSettings")["sql"].InnerText,
+                    Timeout = int.Parse(settingsConfig.SelectSingleNode("dataSettings")["timeout"].InnerText),
                 };
 
                 settings.EmailSetting = new SQL2CSV.Interfaces.Models.EmailSettings()
                 {
-                    MailBody = settingsConfig.GetSection("emailSettings")["mailBody"],
-                    MailSubjectPrefix = settingsConfig.GetSection("emailSettings")["mailSubjectPrefix"],
-                    MailTo = settingsConfig.GetSection("emailSettings")["mailTo"],
-                    SendMail = bool.Parse(settingsConfig.GetSection("emailSettings")["sendMail"])
+                    MailBody = settingsConfig.SelectSingleNode("emailSettings")["mailBody"].InnerText,
+                    MailSubjectPrefix = settingsConfig.SelectSingleNode("emailSettings")["mailSubjectPrefix"].InnerText,
+                    MailTo = settingsConfig.SelectSingleNode("emailSettings")["mailTo"].InnerText,
+                    SendMail = bool.Parse(settingsConfig.SelectSingleNode("emailSettings")["sendMail"].InnerText)
                 };
 
                 settings.FileSetting = new SQL2CSV.Interfaces.Models.FileSettings()
                 {
-                    BatchFormat = settingsConfig.GetSection("fileSettings")["batchFormat"],
-                    BufferWrite = int.Parse(settingsConfig.GetSection("fileSettings")["bufferWrite"]),
-                    Compress = bool.Parse(settingsConfig.GetSection("fileSettings")["compress"]),
-                    DateFormat = settingsConfig.GetSection("fileSettings")["dateFormat"],
-                    DeleteFile = bool.Parse(settingsConfig.GetSection("fileSettings")["deleteFile"]),
-                    FileName = settingsConfig.GetSection("fileSettings")["fileName"],
-                    RelativeFilePath = settingsConfig.GetSection("fileSettings")["relativeFilePath"],
+                    BatchFormat = settingsConfig.SelectSingleNode("fileSettings")["batchFormat"].InnerText,
+                    BufferWrite = int.Parse(settingsConfig.SelectSingleNode("fileSettings")["bufferWrite"].InnerText),
+                    Compress = bool.Parse(settingsConfig.SelectSingleNode("fileSettings")["compress"].InnerText),
+                    DateFormat = settingsConfig.SelectSingleNode("fileSettings")["dateFormat"].InnerText,
+                    DeleteFile = bool.Parse(settingsConfig.SelectSingleNode("fileSettings")["deleteFile"].InnerText),
+                    FileName = settingsConfig.SelectSingleNode("fileSettings")["fileName"].InnerText,
+                    RelativeFilePath = settingsConfig.SelectSingleNode("fileSettings")["relativeFilePath"].InnerText,
                 };
 
                 settingsList.Add(settings);
