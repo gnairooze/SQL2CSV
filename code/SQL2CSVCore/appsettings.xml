@@ -19,6 +19,7 @@
       ]]>
     </sql>
     <timeout>30</timeout>
+    <!-- 0: write all records to one file, more than 0: write this count of records to a file then the next count will be written in the next file. you should add {$Batch$} in fileName in fileSettings section -->
     <maxRecords>5</maxRecords>
   </dataSettings>
   <emailSettings>
@@ -35,10 +36,14 @@
     <sendMail>false</sendMail>
   </emailSettings>
   <fileSettings>
+    <!-- string format used with {$Date$} variable -->
     <dateFormat>dd_MMM_yyyy_UTC_HH_mm_ss_fff</dateFormat>
+    <!-- string format used with {$Batch$} variable -->
     <batchFormat>D3</batchFormat>
+    <!-- variables used in filename {$Date$} ,  {$Batch$}-->
     <fileName>EventInstance_{$Batch$}</fileName>
     <relativeFilePath>.\results</relativeFilePath>
+    <!-- write in file every buffer records count to enhance io performance -->
     <bufferWrite>500</bufferWrite>
     <compress>true</compress>
     <deleteFile>true</deleteFile>
